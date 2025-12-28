@@ -1,0 +1,45 @@
+name: React Build to website.html
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build React Project
+        run: npm run build
+
+      # For Create React App
+      - name: Rename index.html to website.html
+        run: |
+          if [ -d "build" ]; then
+            mv build/index.html build/website.html
+          elif [ -d "dist" ]; then
+            mv dist/index.html dist/website.html
+          else
+            echo "Build folder not found"
+            exit 1
+          fi
+
+      - name: Upload Static Website Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-html
+          path: |
+            build
+            dist
