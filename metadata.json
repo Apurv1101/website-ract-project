@@ -1,0 +1,8 @@
+{
+  "name": "Stream & Dream | Premium Fashion Node",
+  "description": "A luxury fashion e-commerce platform featuring elite drops, heritage cotton tees, and premium tailored shirts for the modern aesthetic explorer.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
