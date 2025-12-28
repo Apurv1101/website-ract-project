@@ -1,45 +1,43 @@
-name: React Build to website.html
+name: Build React and Save HTML
 
 on:
   push:
     branches:
       - main
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Install Dependencies
-        run: npm install
+      - run: npm install
+      - run: npm run build
 
-      - name: Build React Project
-        run: npm run build
-
-      # For Create React App
-      - name: Rename index.html to website.html
+      - name: Prepare output
         run: |
+          mkdir -p public-html
           if [ -d "build" ]; then
             mv build/index.html build/website.html
+            cp -r build/* public-html/
           elif [ -d "dist" ]; then
             mv dist/index.html dist/website.html
+            cp -r dist/* public-html/
           else
-            echo "Build folder not found"
+            echo "No build output"
             exit 1
           fi
 
-      - name: Upload Static Website Files
-        uses: actions/upload-artifact@v4
-        with:
-          name: website-html
-          path: |
-            build
-            dist
+      - name: Commit website files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add public-html
+          git commit -m "Auto build website.html"
+          git push
